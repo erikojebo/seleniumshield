@@ -4,3 +4,4 @@
 *.user
 _ReSharper*
 src/Blog/Images
+*.nupkg
