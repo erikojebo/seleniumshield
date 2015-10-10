@@ -8,7 +8,7 @@ namespace SeleniumShield
     public class AutomationRunResult : IResultListener
     {
         private readonly IList<AutomationStepRunResult> _stepResults;
-        private StringBuilder _resultOutput;
+        private readonly StringBuilder _resultOutput;
 
         public AutomationRunResult()
         {
@@ -18,6 +18,8 @@ namespace SeleniumShield
 
         // Make sure the IEnumerable can't be cast back to a List
         public IEnumerable<AutomationStepRunResult> StepResults => _stepResults.Skip(0);
+
+        public bool WasSuccessful => _stepResults.All(x => x.WasSuccessful);
 
         public void AppendStepResult(AutomationStepRunResult automationStepRunResult)
         {

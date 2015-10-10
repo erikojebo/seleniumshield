@@ -1,0 +1,9 @@
+﻿<Application x:Class="SeleniumShield.UIRunner.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:SeleniumShield.UIRunner"
+             StartupUri="MainWindow.xaml">
+    <Application.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+    </Application.Resources>
+</Application>

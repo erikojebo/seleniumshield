@@ -7,6 +7,8 @@ using SeleniumShield.Output;
 
 namespace SeleniumShield
 {
+    public delegate void StepCompletedHandler(AutomationStepRunResult result, int stepIndex, int totalStepCount);
+
     public class AutomationFlowRunner : IDisposable
     {
         private readonly AutomationFlowRunnerOptions _options;
@@ -33,6 +35,8 @@ namespace SeleniumShield
             _drivers = new List<IWebDriver>();
             _resultListeners = new List<IResultListener>() { options.ResultListener };
         }
+
+        public event StepCompletedHandler StepCompleted;
 
         public void AppendFlow(AutomationFlow flow)
         {
@@ -67,6 +71,8 @@ namespace SeleniumShield
             {
                 var stepRunResult = ExecuteStep(step, driver);
                 automationRunResult.AppendStepResult(stepRunResult);
+
+                FireStepCompleted(stepRunResult, _steps.IndexOf(step), _steps.Count);
             }
 
             _resultListeners.Remove(automationRunResult);
@@ -110,6 +116,7 @@ namespace SeleniumShield
             Log("[{0}] Step '{3}' {1} after {2} attempts.", DateTime.Now, resultText, stepRunResult.TotalAttemptCount, step.Description);
 
             stepRunResult.EndTime = DateTime.Now;
+
             return stepRunResult;
         }
 
@@ -128,6 +135,11 @@ namespace SeleniumShield
             {
                 listener.OutputLine(message, formatParams);
             }
+        }
+
+        protected virtual void FireStepCompleted(AutomationStepRunResult result, int stepindex, int totalstepcount)
+        {
+            StepCompleted?.Invoke(result, stepindex, totalstepcount);
         }
     }
 }

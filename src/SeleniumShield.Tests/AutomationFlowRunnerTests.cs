@@ -253,7 +253,7 @@ namespace SeleniumShield.Tests
             {
                 yield return new AutomationStep("Failing child flow step", driver =>
                 {
-                    if (_remainingFailuresBeforeSuccess <= 0)
+                    if (_remainingFailuresBeforeSuccess > 0)
                     {
                         throw new SeleniumShieldException("Set up to fail");
                     }

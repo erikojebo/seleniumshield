@@ -5,13 +5,12 @@ namespace SeleniumShield
 {
     public class AutomationStep
     {
-        private readonly string _description;
         private readonly Action<IWebDriver> _executeAction;
         private readonly Action<IWebDriver> _resetAction;
 
         public AutomationStep(string description, Action<IWebDriver> executeAction, Action<IWebDriver> resetAction = null)
         {
-            _description = description;
+            Description = description;
             _executeAction = executeAction;
             _resetAction = resetAction;
         }
@@ -21,17 +20,11 @@ namespace SeleniumShield
             _executeAction(driver);
         }
 
-        public virtual string Description
-        {
-            get { return _description; }
-        }
+        public virtual string Description { get; }
 
         public void Reset(IWebDriver driver)
         {
-            if (_resetAction != null)
-            {
-                _resetAction(driver);
-            }
+            _resetAction?.Invoke(driver);
         }
     }
 }
