@@ -2,6 +2,6 @@
 {
     public interface IResultListener
     {
-        void Output(string message);
+        void OutputLine(string message, params object[] formatParams);
     }
 }

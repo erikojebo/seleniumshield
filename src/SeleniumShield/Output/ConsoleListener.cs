@@ -4,9 +4,9 @@ namespace SeleniumShield.Output
 {
     public class ConsoleListener : IResultListener
     {
-        public void Output(string message)
+        public void OutputLine(string message, params object[] formatParams)
         {
-            Console.Write(message);
+            Console.WriteLine(message, formatParams);
         }
     }
 }

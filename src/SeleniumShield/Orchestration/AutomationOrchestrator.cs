@@ -26,16 +26,8 @@ namespace SeleniumShield.Orchestration
 
                 runner.AppendFlow(automationFlow);
 
-                var result = runner.Execute();
-
-                WriteResultToOutput(result);
+                runner.Execute();
             }
-        }
-
-        private void WriteResultToOutput(AutomationRunResult result)
-        {
-            var resultReport = result.GetResultReport();
-            _options.ResultListener.Output(resultReport);
         }
     }
 }
