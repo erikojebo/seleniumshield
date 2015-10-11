@@ -30,6 +30,7 @@ namespace SeleniumShield.UIRunner.ViewModels
             var uiExecutableAttribute = flowType.GetCustomAttribute<UIExecutableAttribute>();
 
             Name = uiExecutableAttribute.DisplayName ?? flowType.Name;
+            Description = uiExecutableAttribute.Description;
             Parameters = new ObservableCollection<FlowParameterViewModel>(parameterViewModels);
             ExecuteCommand = new DelegateCommand(Execute);
         }
@@ -58,9 +59,11 @@ namespace SeleniumShield.UIRunner.ViewModels
             set { Set(() => IsFlowProgressIndeterminate, value); }
         }
 
-        public string Name { get; private set; }
+        public string Name { get; }
+        public string Description { get; }
+        public bool HasDescription => !string.IsNullOrWhiteSpace(Description);
         public ObservableCollection<FlowParameterViewModel> Parameters { get; }
-        public DelegateCommand ExecuteCommand { get; private set; }
+        public DelegateCommand ExecuteCommand { get; }
 
         private async void Execute()
         {

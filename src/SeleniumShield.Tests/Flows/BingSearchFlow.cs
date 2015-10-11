@@ -3,7 +3,7 @@ using SeleniumShield.Metadata;
 
 namespace SeleniumShield.Tests.Flows
 {
-    [UIExecutable(DisplayName = "Search Bing")]
+    [UIExecutable(DisplayName = "Search Bing", Description = "Searches Microsoft Bing for the specified search query")]
     public class BingSearchFlow : AutomationFlow
     {
         public BingSearchFlow(string query)
