@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows;
+using SeleniumShield.Metadata;
 using SeleniumShield.UIRunner.Exceptions;
 using SeleniumShield.UIRunner.Infrastructure;
 using SeleniumShield.UIRunner.Mvvm;
@@ -26,7 +27,9 @@ namespace SeleniumShield.UIRunner.ViewModels
             _constructor = constructor;
             _options = options;
 
-            Name = flowType.Name;
+            var uiExecutableAttribute = flowType.GetCustomAttribute<UIExecutableAttribute>();
+
+            Name = uiExecutableAttribute.DisplayName ?? flowType.Name;
             Parameters = new ObservableCollection<FlowParameterViewModel>(parameterViewModels);
             ExecuteCommand = new DelegateCommand(Execute);
         }
