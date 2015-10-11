@@ -4,6 +4,7 @@ using System.Linq;
 using System.Windows;
 using SeleniumShield.Loader;
 using SeleniumShield.Output;
+using SeleniumShield.UIRunner.Infrastructure;
 using SeleniumShield.UIRunner.Mvvm;
 
 namespace SeleniumShield.UIRunner.ViewModels
@@ -11,6 +12,7 @@ namespace SeleniumShield.UIRunner.ViewModels
     internal class FlowListViewModel : ViewModelBase, IResultListener
     {
         private readonly FlowAssemblyLoader _flowLoader;
+        private readonly UserSettingsService _settingsService;
 
         public FlowListViewModel()
         {
@@ -18,9 +20,14 @@ namespace SeleniumShield.UIRunner.ViewModels
             Flows = new ObservableCollection<FlowViewModel>();
 
             _flowLoader = new FlowAssemblyLoader();
+            _settingsService = new UserSettingsService();
 
-            if (Environment.MachineName == "WL08127")
-                FlowAssemblyPath = @"C:\code\seleniumshield\src\SeleniumShield.Tests\bin\Debug\SeleniumShield.Tests.dll";
+            FlowAssemblyPath = _settingsService.LastFlowAssemblyPath;
+
+            if (FlowAssemblyPath != null)
+            {
+                InitializeFlowList();
+            }
         }
 
         public string Log
@@ -32,7 +39,11 @@ namespace SeleniumShield.UIRunner.ViewModels
         public string FlowAssemblyPath
         {
             get { return Get(() => FlowAssemblyPath); }
-            set { Set(() => FlowAssemblyPath, value); }
+            set
+            {
+                Set(() => FlowAssemblyPath, value);
+                _settingsService.LastFlowAssemblyPath = value;
+            }
         }
 
         public ObservableCollection<FlowViewModel> Flows { get; set; }

@@ -75,6 +75,7 @@
     </ApplicationDefinition>
     <Compile Include="Exceptions\SeleniumShieldConversionException.cs" />
     <Compile Include="Infrastructure\EventAggregator.cs" />
+    <Compile Include="Infrastructure\UserSettingsService.cs" />
     <Compile Include="Mvvm\ViewModelBase.cs" />
     <Compile Include="ViewModels\FlowListViewModel.cs" />
     <Compile Include="ViewModels\FlowParameterViewModel.cs" />
