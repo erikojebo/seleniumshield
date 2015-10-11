@@ -3,7 +3,7 @@ using SeleniumShield.Metadata;
 
 namespace SeleniumShield.Tests.Flows
 {
-    [UIExecutable]
+    [UIExecutable(DependencyGroup = "Testing")]
     public class SlowMultiStepFlow : AutomationFlow
     {
         public SlowMultiStepFlow(int stepCount) : this(1000, stepCount)

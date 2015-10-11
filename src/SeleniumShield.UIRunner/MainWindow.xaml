@@ -40,98 +40,121 @@
             <Button Grid.Column="2" Command="{Binding InitializeFlowListCommand}">Load</Button>
         </Grid>
 
-        <!-- Automation flow -->
+        <!-- Automation flow groups -->
         <ListView
             Grid.Column="0"
             Grid.Row="1"
-            ItemsSource="{Binding Flows}"
+            ItemsSource="{Binding FlowGroups}"
             HorizontalContentAlignment="Stretch"
             Background="Transparent"
-            BorderThickness="0">
+            BorderThickness="0"
+            ScrollViewer.CanContentScroll="False">
 
-            <ListView.ItemContainerStyle>
-                <Style TargetType="ListViewItem">
-                    <Setter Property="Focusable" Value="false"/>
-
-                    <Style.Triggers>
-                        <DataTrigger Binding="{Binding WasSuccessful}" Value="True">
-                            <Setter Property="Background" Value="#dff0d8" />
-                            <Setter Property="Foreground" Value="#3c763d"></Setter>
-                        </DataTrigger>
-                        <DataTrigger Binding="{Binding WasSuccessful}" Value="False">
-                            <Setter Property="Background" Value="#f2dede" />
-                            <Setter Property="Foreground" Value="#a94442"></Setter>
-                        </DataTrigger>
-                    </Style.Triggers>
-                </Style>
-            </ListView.ItemContainerStyle>
-            
             <ListView.ItemTemplate>
                 <DataTemplate>
-                    <Border>
-                        <!-- Automation flow content -->
-                        <Grid Margin="5 10">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                            </Grid.RowDefinitions>
+                    <StackPanel Margin="0 0 0 30">
+                        
+                        <TextBlock Text="{Binding Name}" FontSize="25" Margin="10 0 0 0" />
+                        
+                        <!-- Automation flows -->
+                        <ListBox
+                            ItemsSource="{Binding Flows}"
+                            HorizontalContentAlignment="Stretch"
+                            Background="Transparent"
+                            BorderThickness="0">
 
-                            <TextBlock Grid.Row="0" Text="{Binding Name}" FontSize="16" />
-                            <Button Grid.Row="0" Command="{Binding ExecuteCommand}" HorizontalAlignment="Right">Execute</Button>
-                            
-                            <ProgressBar 
-                                Grid.Row="0" 
-                                Width="100" 
-                                Height="15"
-                                Margin="0 0 100 0" 
-                                IsIndeterminate="{Binding IsFlowProgressIndeterminate}" 
-                                Value="{Binding FlowProgressPercentageValue}"
-                                Maximum="100"
-                                HorizontalAlignment="Right" 
-                                Visibility="{Binding IsFlowExecuting, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                            <ListBox.ItemContainerStyle>
+                                <Style TargetType="ListBoxItem">
+                                    <Setter Property="Focusable" Value="false" />
 
-                            <TextBlock Grid.Row="1" Text="{Binding Description}" FontSize="12" Visibility="{Binding HasDescription, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding WasSuccessful}" Value="True">
+                                            <Setter Property="Background" Value="#dff0d8" />
+                                            <Setter Property="Foreground" Value="#3c763d" />
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding WasSuccessful}" Value="False">
+                                            <Setter Property="Background" Value="#f2dede" />
+                                            <Setter Property="Foreground" Value="#a94442" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </ListBox.ItemContainerStyle>
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <Border>
+                                        <!-- Automation flow content -->
+                                        <Grid Margin="5 10">
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                            </Grid.RowDefinitions>
 
-                            <ListView
-                                Grid.Row="2"
-                                Margin="0, 10, 0, 0"
-                                ItemsSource="{Binding Parameters}"
-                                HorizontalContentAlignment="Stretch"
-                                Background="Transparent"
-                                BorderThickness="0">
+                                            <TextBlock Grid.Row="0" Text="{Binding Name}" FontSize="16" />
+                                            <Button Grid.Row="0" Command="{Binding ExecuteCommand}"
+                                                    HorizontalAlignment="Right">
+                                                Execute
+                                            </Button>
 
-                                <ListView.ItemContainerStyle>
-                                    <Style TargetType="ListViewItem">
-                                        <Setter Property="Focusable" Value="false"/>
-                                    </Style>
-                                </ListView.ItemContainerStyle>
+                                            <ProgressBar
+                                                Grid.Row="0"
+                                                Width="100"
+                                                Height="15"
+                                                Margin="0 0 100 0"
+                                                IsIndeterminate="{Binding IsFlowProgressIndeterminate}"
+                                                Value="{Binding FlowProgressPercentageValue}"
+                                                Maximum="100"
+                                                HorizontalAlignment="Right"
+                                                Visibility="{Binding IsFlowExecuting, Converter={StaticResource BoolToVisibilityConverter}}" />
 
-                                <!-- Constructor parameter -->
-                                <ListView.ItemTemplate>
-                                    <DataTemplate>
-                                        <Grid>
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="*" />
-                                                <ColumnDefinition Width="auto" />
-                                                <ColumnDefinition Width="200" />
-                                            </Grid.ColumnDefinitions>
+                                            <TextBlock Grid.Row="1" Text="{Binding Description}" FontSize="12"
+                                                       Visibility="{Binding HasDescription, Converter={StaticResource BoolToVisibilityConverter}}" />
 
-                                            <!-- Constructor parameter content -->
-                                            <TextBlock Grid.Column="0" Text="{Binding Name}" />
-                                            <TextBlock Grid.Column="1" Text="{Binding TypeName}" Margin="10 0" />
-                                            <TextBox Grid.Column="2" DockPanel.Dock="Right"
-                                                     HorizontalAlignment="Stretch" Text="{Binding Value}" />
+                                            <ListView
+                                                Grid.Row="2"
+                                                Margin="0, 10, 0, 0"
+                                                ItemsSource="{Binding Parameters}"
+                                                HorizontalContentAlignment="Stretch"
+                                                Background="Transparent"
+                                                BorderThickness="0">
+
+                                                <ListView.ItemContainerStyle>
+                                                    <Style TargetType="ListViewItem">
+                                                        <Setter Property="Focusable" Value="false" />
+                                                    </Style>
+                                                </ListView.ItemContainerStyle>
+
+                                                <!-- Constructor parameter -->
+                                                <ListView.ItemTemplate>
+                                                    <DataTemplate>
+                                                        <Grid>
+                                                            <Grid.ColumnDefinitions>
+                                                                <ColumnDefinition Width="*" />
+                                                                <ColumnDefinition Width="auto" />
+                                                                <ColumnDefinition Width="200" />
+                                                            </Grid.ColumnDefinitions>
+
+                                                            <!-- Constructor parameter content -->
+                                                            <TextBlock Grid.Column="0" Text="{Binding Name}" />
+                                                            <TextBlock Grid.Column="1" Text="{Binding TypeName}"
+                                                                       Margin="10 0" />
+                                                            <TextBox Grid.Column="2" DockPanel.Dock="Right"
+                                                                     HorizontalAlignment="Stretch"
+                                                                     Text="{Binding Value}" />
+                                                        </Grid>
+                                                    </DataTemplate>
+                                                </ListView.ItemTemplate>
+                                            </ListView>
                                         </Grid>
-                                    </DataTemplate>
-                                </ListView.ItemTemplate>
-                            </ListView>
-                        </Grid>
-                    </Border>
+                                    </Border>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                    </StackPanel>
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
-        
+
         <GridSplitter Grid.Column="1" Grid.Row="0" Grid.RowSpan="2" HorizontalAlignment="Stretch" />
 
         <ScrollViewer x:Name="LogScrollViewer" Grid.Column="2" Grid.Row="0" Grid.RowSpan="2">

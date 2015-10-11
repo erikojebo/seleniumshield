@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Reflection;
 using System.Windows;
 using SeleniumShield.Loader;
+using SeleniumShield.Metadata;
 using SeleniumShield.Output;
 using SeleniumShield.UIRunner.Infrastructure;
 using SeleniumShield.UIRunner.Mvvm;
@@ -17,7 +19,7 @@ namespace SeleniumShield.UIRunner.ViewModels
         public FlowListViewModel()
         {
             InitializeFlowListCommand = new DelegateCommand(InitializeFlowList);
-            Flows = new ObservableCollection<FlowViewModel>();
+            FlowGroups = new ObservableCollection<FlowGroupViewModel>();
 
             _flowLoader = new FlowAssemblyLoader();
             _settingsService = new UserSettingsService();
@@ -46,56 +48,20 @@ namespace SeleniumShield.UIRunner.ViewModels
             }
         }
 
-        public ObservableCollection<FlowViewModel> Flows { get; set; }
+        public ObservableCollection<FlowGroupViewModel> FlowGroups { get; } 
 
         private async void InitializeFlowList()
         {
-            var allowedParameterTypes = new[]
-            {
-                typeof(int),
-                typeof(int?),
-                typeof(decimal),
-                typeof(decimal?),
-                typeof(short),
-                typeof(short?),
-                typeof(long),
-                typeof(long?),
-                typeof(float),
-                typeof(float?),
-                typeof(bool),
-                typeof(bool?),
-                typeof(string),
-                typeof(char),
-                typeof(char?),
-                typeof(DateTime),
-                typeof(DateTime?)
-            };
-
             var flowTypes = await _flowLoader.LoadFlowTypes(FlowAssemblyPath);
+            var flowTypeList = flowTypes.ToList();
 
-            Flows.Clear();
+            var flowGroups = flowTypeList.GroupBy(x => x.GetCustomAttribute<UIExecutableAttribute>().DependencyGroup);
 
-            var options = new AutomationFlowRunnerOptions()
+            foreach (var flowGroup in flowGroups)
             {
-                ResultListener = this
-            };
+                var groupViewModel = new FlowGroupViewModel(flowGroup.Key, flowGroup, this);
 
-            foreach (var flowType in flowTypes)
-            {
-                var constructors = flowType.GetConstructors().OrderByDescending(x => x.GetParameters().Length);
-
-                foreach (var constructorInfo in constructors)
-                {
-                    var parameters = constructorInfo.GetParameters();
-
-                    if (parameters.All(x => allowedParameterTypes.Contains(x.ParameterType)))
-                    {
-                        var parameterViewModels = parameters.Select(x => new FlowParameterViewModel(x));
-                        var flowViewModel = new FlowViewModel(flowType, constructorInfo, parameterViewModels, options);
-
-                        Flows.Add(flowViewModel);
-                    }
-                }
+                FlowGroups.Add(groupViewModel);
             }
         }
 
