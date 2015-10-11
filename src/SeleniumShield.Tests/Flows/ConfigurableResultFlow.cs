@@ -3,7 +3,7 @@ using SeleniumShield.Metadata;
 
 namespace SeleniumShield.Tests.Flows
 {
-    [UIExecutable(DependencyGroup = "Testing")]
+    [UIExecutable(DependencyGroup = "Testing", DependencyGroupOrder = 1)]
     public class ConfigurableResultFlow : AutomationFlow
     {
         public ConfigurableResultFlow(bool shouldSucceed)

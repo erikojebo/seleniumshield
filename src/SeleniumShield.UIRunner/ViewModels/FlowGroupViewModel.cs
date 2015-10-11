@@ -2,18 +2,16 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Reflection;
+using SeleniumShield.Metadata;
 using SeleniumShield.UIRunner.Mvvm;
 
 namespace SeleniumShield.UIRunner.ViewModels
 {
     internal class FlowGroupViewModel : ViewModelBase
     {
-        private readonly FlowListViewModel _flowListViewModel;
-
         public FlowGroupViewModel(string name, IEnumerable<Type> flowTypes, FlowListViewModel flowListViewModel)
         {
-            _flowListViewModel = flowListViewModel;
-
             Name = name;
             Flows = new ObservableCollection<FlowViewModel>();
 
@@ -40,10 +38,14 @@ namespace SeleniumShield.UIRunner.ViewModels
 
             var options = new AutomationFlowRunnerOptions()
             {
-                ResultListener = _flowListViewModel
+                ResultListener = flowListViewModel
             };
 
-            foreach (var flowType in flowTypes)
+            var orderedFlowTypes = flowTypes
+                .OrderBy(x => x.GetCustomAttribute<UIExecutableAttribute>().OptionalDependencyGroupOrder ?? -1)
+                .ThenBy(FlowViewModel.GetDisplayName);
+
+            foreach (var flowType in orderedFlowTypes)
             {
                 var constructors = flowType.GetConstructors().OrderByDescending(x => x.GetParameters().Length);
 
@@ -63,6 +65,7 @@ namespace SeleniumShield.UIRunner.ViewModels
         }
 
         public string Name { get; }
+        public bool HasName => !string.IsNullOrWhiteSpace(Name);
         public ObservableCollection<FlowViewModel> Flows { get; } 
     }
 }

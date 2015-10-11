@@ -29,8 +29,9 @@ namespace SeleniumShield.UIRunner.ViewModels
 
             var uiExecutableAttribute = flowType.GetCustomAttribute<UIExecutableAttribute>();
 
-            Name = uiExecutableAttribute.DisplayName ?? flowType.Name;
+            Name = GetDisplayName(flowType);
             Description = uiExecutableAttribute.Description;
+            DependencyGroupOrder = uiExecutableAttribute.OptionalDependencyGroupOrder;
             Parameters = new ObservableCollection<FlowParameterViewModel>(parameterViewModels);
             ExecuteCommand = new DelegateCommand(Execute);
         }
@@ -62,6 +63,10 @@ namespace SeleniumShield.UIRunner.ViewModels
         public string Name { get; }
         public string Description { get; }
         public bool HasDescription => !string.IsNullOrWhiteSpace(Description);
+
+        public int? DependencyGroupOrder { get; }
+        public bool HasDependencyGroupOrder => DependencyGroupOrder.HasValue;
+        
         public ObservableCollection<FlowParameterViewModel> Parameters { get; }
         public DelegateCommand ExecuteCommand { get; }
 
@@ -116,6 +121,12 @@ namespace SeleniumShield.UIRunner.ViewModels
 
                 FlowProgressPercentageValue = (stepIndex + 1) / (double)totalStepCount * 100;
             });
+        }
+
+        public static string GetDisplayName(Type flowType)
+        {
+            var attribute = flowType.GetCustomAttribute<UIExecutableAttribute>();
+            return attribute.DisplayName ?? flowType.Name;
         }
     }
 }
