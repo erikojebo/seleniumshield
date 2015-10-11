@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
+using SeleniumShield.Metadata;
 
 namespace SeleniumShield.Loader
 {
@@ -14,7 +15,9 @@ namespace SeleniumShield.Loader
             {
                 var assembly = Assembly.LoadFile(assemblyPath);
 
-                return assembly.GetTypes().Where(x => typeof(IAutomationFlow).IsAssignableFrom(x));
+                return assembly.GetTypes()
+                    .Where(x => typeof(IAutomationFlow).IsAssignableFrom(x))
+                    .Where(x => x.GetCustomAttributes(typeof(UIExecutableAttribute), true).Any());
             });
         }
     }

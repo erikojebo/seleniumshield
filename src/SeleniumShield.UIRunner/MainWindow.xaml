@@ -47,8 +47,7 @@
             ItemsSource="{Binding Flows}"
             HorizontalContentAlignment="Stretch"
             Background="Transparent"
-            BorderThickness="0"
-            FocusManager.IsFocusScope="True">
+            BorderThickness="0">
 
             <ListView.ItemContainerStyle>
                 <Style TargetType="ListViewItem">

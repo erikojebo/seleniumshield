@@ -1,7 +1,9 @@
 ﻿using SeleniumShield.Extensions;
+using SeleniumShield.Metadata;
 
 namespace SeleniumShield.Tests.Flows
 {
+    [UIExecutable]
     public class BingSearchFlow : AutomationFlow
     {
         public BingSearchFlow(string query)
