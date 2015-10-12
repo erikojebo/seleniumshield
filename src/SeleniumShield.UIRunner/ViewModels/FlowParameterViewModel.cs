@@ -39,6 +39,11 @@ namespace SeleniumShield.UIRunner.ViewModels
         {
             get
             {
+                if (IsOptional && HasDefaultValue && string.IsNullOrEmpty(Value))
+                {
+                    return Type.Missing;
+                }
+
                 try
                 {
                     var converter = TypeDescriptor.GetConverter(_parameterInfo.ParameterType);
