@@ -79,6 +79,7 @@
     <Compile Include="Fakes\FakeWebDriver.cs" />
     <Compile Include="Flows\BingSearchFlow.cs" />
     <Compile Include="Flows\ConfigurableResultFlow.cs" />
+    <Compile Include="Flows\FlowWithOptionalParams.cs" />
     <Compile Include="Flows\SlowMultiStepFlow.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

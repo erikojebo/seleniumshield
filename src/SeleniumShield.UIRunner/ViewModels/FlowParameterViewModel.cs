@@ -15,10 +15,20 @@ namespace SeleniumShield.UIRunner.ViewModels
             _parameterInfo = parameterInfo;
             Name = parameterInfo.Name;
             TypeName = parameterInfo.ParameterType.Name;
+            IsOptional = parameterInfo.IsOptional;
+
+            DisplayText = Name;
+
+            if (parameterInfo.IsOptional)
+            {
+                DisplayText += " (optional)";
+            }
         }
 
-        public string Name { get; private set; }
-        public string TypeName { get; private set; }
+        public string Name { get; }
+        public string TypeName { get; }
+        public string DisplayText { get; }
+        public bool IsOptional { get; }
 
         public string Value
         {

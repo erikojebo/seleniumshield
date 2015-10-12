@@ -26,7 +26,7 @@ namespace SeleniumShield.UIRunner.ViewModels
 
             FlowAssemblyPath = _settingsService.LastFlowAssemblyPath;
 
-            if (FlowAssemblyPath != null)
+            if (!string.IsNullOrWhiteSpace(FlowAssemblyPath))
             {
                 InitializeFlowList();
             }
