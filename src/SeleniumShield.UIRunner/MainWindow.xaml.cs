@@ -42,6 +42,7 @@ namespace SeleniumShield.UIRunner
             if (result == true)
             {
                 ViewModel.FlowAssemblyPath = fileDialog.FileName;
+                ViewModel.InitializeFlowList();
             }
         }
 

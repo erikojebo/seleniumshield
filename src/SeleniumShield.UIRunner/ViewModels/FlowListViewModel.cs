@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Windows;
@@ -44,14 +45,28 @@ namespace SeleniumShield.UIRunner.ViewModels
             set
             {
                 Set(() => FlowAssemblyPath, value);
+
+                FlowAssemblyFileName = Path.GetFileName(value);
+
                 _settingsService.LastFlowAssemblyPath = value;
+            }
+        }
+
+        public string FlowAssemblyFileName
+        {
+            get { return Get(() => FlowAssemblyFileName); }
+            set
+            {
+                Set(() => FlowAssemblyFileName, value);
             }
         }
 
         public ObservableCollection<FlowGroupViewModel> FlowGroups { get; } 
 
-        private async void InitializeFlowList()
+        public async void InitializeFlowList()
         {
+            FlowGroups.Clear();
+
             var flowTypes = await _flowLoader.LoadFlowTypes(FlowAssemblyPath);
             var flowTypeList = flowTypes.ToList();
 
