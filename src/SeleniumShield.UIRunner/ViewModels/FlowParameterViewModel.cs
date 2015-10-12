@@ -46,8 +46,7 @@ namespace SeleniumShield.UIRunner.ViewModels
 
                 try
                 {
-                    var converter = TypeDescriptor.GetConverter(_parameterInfo.ParameterType);
-                    return converter.ConvertFromInvariantString(Value);
+                    return ConvertValueFromString();
                 }
                 catch (Exception)
                 {
@@ -55,6 +54,28 @@ namespace SeleniumShield.UIRunner.ViewModels
                 }
             }
         }
+
+        private object ConvertValueFromString()
+        {
+            var converter = TypeDescriptor.GetConverter(_parameterInfo.ParameterType);
+            return converter.ConvertFromInvariantString(Value);
+        }
+
+        private bool CanConvertValueFromString()
+        {
+            try
+            {
+                ConvertValueFromString();
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        public bool HasValidValue => CanConvertValueFromString() || IsOptional;
 
         private string GetDisplayText(ParameterInfo parameterInfo)
         {

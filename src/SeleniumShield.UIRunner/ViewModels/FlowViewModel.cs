@@ -29,12 +29,15 @@ namespace SeleniumShield.UIRunner.ViewModels
 
             var uiExecutableAttribute = flowType.GetCustomAttribute<UIExecutableAttribute>();
 
+            FlowType = flowType;
             Name = GetDisplayName(flowType);
             Description = uiExecutableAttribute.Description;
             DependencyGroupOrder = uiExecutableAttribute.OptionalDependencyGroupOrder;
             Parameters = new ObservableCollection<FlowParameterViewModel>(parameterViewModels);
             ExecuteCommand = new DelegateCommand(Execute);
         }
+
+        public Type FlowType { get; }
 
         public bool? WasSuccessful
         {
@@ -70,7 +73,24 @@ namespace SeleniumShield.UIRunner.ViewModels
         public ObservableCollection<FlowParameterViewModel> Parameters { get; }
         public DelegateCommand ExecuteCommand { get; }
 
-        private async void Execute()
+        public bool HasValidParameterValues
+        {
+            get { return Parameters.All(x => x.HasValidValue); }
+        }
+
+        public bool? WasIgnored
+        {
+            get { return Get(() => WasIgnored); }
+            set { Set(() => WasIgnored, value); }
+        }
+
+        public bool? CouldBeExecuted
+        {
+            get { return Get(() => CouldBeExecuted); }
+            set { Set(() => CouldBeExecuted, value); }
+        }
+
+        public async void Execute()
         {
             IsFlowExecuting = true;
             IsFlowProgressIndeterminate = true;
@@ -87,6 +107,8 @@ namespace SeleniumShield.UIRunner.ViewModels
             {
                 using (var runner = new AutomationFlowRunner(_options))
                 {
+                    _options.ResultListener.OutputLine($"[{DateTime.Now}] Starting flow '{Name}'...");
+
                     try
                     {
                         runner.StepCompleted += OnStepCompleted;

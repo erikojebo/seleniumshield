@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
@@ -20,6 +21,7 @@ namespace SeleniumShield.UIRunner.ViewModels
         public FlowListViewModel()
         {
             InitializeFlowListCommand = new DelegateCommand(InitializeFlowList);
+            ExecuteAllFlowsCommand = new DelegateCommand(ExecuteAllFlows);
             FlowGroups = new ObservableCollection<FlowGroupViewModel>();
 
             _flowLoader = new FlowAssemblyLoader();
@@ -61,7 +63,9 @@ namespace SeleniumShield.UIRunner.ViewModels
             }
         }
 
-        public ObservableCollection<FlowGroupViewModel> FlowGroups { get; } 
+        public ObservableCollection<FlowGroupViewModel> FlowGroups { get; }
+        public DelegateCommand InitializeFlowListCommand { get; }
+        public DelegateCommand ExecuteAllFlowsCommand { get; }
 
         public async void InitializeFlowList()
         {
@@ -80,8 +84,47 @@ namespace SeleniumShield.UIRunner.ViewModels
             }
         }
 
-        public DelegateCommand InitializeFlowListCommand { get; }
-        public DelegateCommand ExecuteAllFlowsCommand { get; }
+        private void ExecuteAllFlows()
+        {
+            var flowsToExecute = new List<FlowViewModel>();
+
+            var allFlowViewModels = FlowGroups.SelectMany(x => x.Flows).ToList();
+
+            foreach (var flowViewModel in allFlowViewModels)
+            {
+                flowViewModel.CouldBeExecuted = null;
+                flowViewModel.WasIgnored = null;
+            }
+
+            var viewModelsByFlowType = allFlowViewModels.GroupBy(x => x.FlowType).ToList();
+
+            foreach (var g in viewModelsByFlowType)
+            {
+                var executableViewModel = g.OrderByDescending(x => x.Parameters.Count).FirstOrDefault(x => x.HasValidParameterValues);
+
+                if (executableViewModel != null)
+                    flowsToExecute.Add(executableViewModel);
+            }
+
+            var flowViewModelsWhichCouldNotBeExecuted = allFlowViewModels.Where(x => !flowsToExecute.Any(y => y.FlowType == x.FlowType));
+
+            foreach (var flowViewModel in flowViewModelsWhichCouldNotBeExecuted)
+            {
+                flowViewModel.CouldBeExecuted = false;
+            }
+
+            var flowViewModelsWhichWereIgnored = allFlowViewModels.Where(x => flowsToExecute.Any(y => y.FlowType == x.FlowType) && !flowsToExecute.Contains(x));
+
+            foreach (var flowViewModel in flowViewModelsWhichWereIgnored)
+            {
+                flowViewModel.WasIgnored = true;
+            }
+
+            foreach (var flowListViewModel in flowsToExecute)
+            {
+                flowListViewModel.Execute();
+            }
+        }
 
         public void OutputLine(string message, params object[] formatParams)
         {

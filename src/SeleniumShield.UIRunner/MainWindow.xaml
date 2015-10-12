@@ -100,6 +100,14 @@
                                             <Setter Property="Background" Value="#f2dede" />
                                             <Setter Property="Foreground" Value="#a94442" />
                                         </DataTrigger>
+                                        <DataTrigger Binding="{Binding WasIgnored}" Value="True">
+                                            <Setter Property="Background" Value="#ececec" />
+                                            <Setter Property="Foreground" Value="#a0a0a0" />
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding CouldBeExecuted}" Value="False">
+                                            <Setter Property="Background" Value="#fcf8e3" />
+                                            <Setter Property="Foreground" Value="#8a6d3b" />
+                                        </DataTrigger>
                                     </Style.Triggers>
                                 </Style>
                             </ListBox.ItemContainerStyle>
@@ -124,7 +132,8 @@
                                             </StackPanel>
 
                                             <Button Grid.Row="0" Command="{Binding ExecuteCommand}"
-                                                    HorizontalAlignment="Right">
+                                                    HorizontalAlignment="Right"
+                                                    Margin="0 3 0 0">
                                                 Execute in browser
                                             </Button>
 
@@ -132,7 +141,7 @@
                                                 Grid.Row="0"
                                                 Width="100"
                                                 Height="15"
-                                                Margin="0 0 100 0"
+                                                Margin="0 0 150 0"
                                                 IsIndeterminate="{Binding IsFlowProgressIndeterminate}"
                                                 Value="{Binding FlowProgressPercentageValue}"
                                                 Maximum="100"
