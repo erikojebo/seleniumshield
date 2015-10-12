@@ -17,7 +17,7 @@ namespace SeleniumShield.UIRunner.ViewModels
             TypeName = parameterInfo.ParameterType.Name;
             IsOptional = parameterInfo.IsOptional;
             DefaultValue = (parameterInfo.DefaultValue ?? "").ToString();
-            HasDefaultValue = parameterInfo.HasDefaultValue;
+            HasDefaultValue = parameterInfo.DefaultValue != null;
 
             DisplayText = GetDisplayText(parameterInfo);
         }

@@ -83,7 +83,7 @@ namespace SeleniumShield.UIRunner.ViewModels
 
         private async Task<bool> ExecuteAsync()
         {
-            return await Task.Run(() =>
+            return await Task.Factory.StartNew(() =>
             {
                 using (var runner = new AutomationFlowRunner(_options))
                 {

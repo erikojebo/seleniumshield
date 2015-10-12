@@ -8,12 +8,35 @@
         Title="Selenium Shield" Height="800" Width="1400">
 
     <Window.Resources>
-        <Style TargetType="Button">
+        <!--<Style TargetType="Button">
             <Style.Setters>
                 <Setter Property="MinWidth" Value="80" />
                 <Setter Property="Height" Value="23" />
                 <Setter Property="Margin" Value="5 0 0 0" />
             </Style.Setters>
+        </Style>-->
+
+        <ControlTemplate x:Key="HyperlinkLikeButtonTemplate" TargetType="{x:Type Button}">
+            <TextBlock
+                x:Name="innerText"
+                Foreground="{DynamicResource {x:Static SystemColors.HotTrackBrushKey}}"
+                Cursor="Hand"
+                Margin="0 0 0 10"
+                FontSize="14">
+                <ContentPresenter />
+            </TextBlock>
+
+            <ControlTemplate.Triggers>
+                <Trigger Property="Button.IsMouseOver" Value="true">
+                    <Setter TargetName="innerText" Property="Foreground"
+                            Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}" />
+                    <Setter TargetName="innerText" Property="TextDecorations" Value="Underline" />
+                </Trigger>
+            </ControlTemplate.Triggers>
+        </ControlTemplate>
+
+        <Style TargetType="{x:Type Button}">
+            <Setter Property="Template" Value="{StaticResource HyperlinkLikeButtonTemplate}" />
         </Style>
     </Window.Resources>
 
@@ -26,33 +49,10 @@
         </Grid.ColumnDefinitions>
 
         <StackPanel Grid.Column="0" Margin="10">
-            
+
             <StackPanel.Resources>
-                
                 <Style TargetType="TextBlock">
                     <Setter Property="FontSize" Value="14" />
-                </Style>
-                
-                <ControlTemplate x:Key="HyperlinkLikeButtonTemplate" TargetType="{x:Type Button}">
-                    <TextBlock 
-                        x:Name="innerText" 
-                        Foreground="{DynamicResource {x:Static SystemColors.HotTrackBrushKey}}" 
-                        Cursor="Hand" 
-                        Margin="0 0 0 10"
-                        FontSize="14">
-                        <ContentPresenter />
-                    </TextBlock>
-                    
-                    <ControlTemplate.Triggers>
-                        <Trigger Property="Button.IsMouseOver" Value="true">
-                            <Setter TargetName="innerText" Property="Foreground" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}" />
-                            <Setter TargetName="innerText" Property="TextDecorations" Value="Underline" />
-                        </Trigger>
-                    </ControlTemplate.Triggers>
-                </ControlTemplate>
-
-                <Style TargetType="{x:Type Button}">
-                    <Setter Property="Template" Value="{StaticResource HyperlinkLikeButtonTemplate}" />
                 </Style>
             </StackPanel.Resources>
             
@@ -61,6 +61,8 @@
             
             <Button Click="OnBrowseFlowAssemblyClick">Find assembly</Button>
             <Button Command="{Binding InitializeFlowListCommand}">Reload current assembly</Button>
+            
+            <Button Command="{Binding ExecuteAllFlowsCommand}">Execute all flows</Button>
         </StackPanel>
         
         <!-- Automation flow groups -->
@@ -103,9 +105,9 @@
                             </ListBox.ItemContainerStyle>
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
-                                    <Border>
+                                    <Border BorderThickness="0 0 0 1" BorderBrush="#efefef">
                                         <!-- Automation flow content -->
-                                        <Grid Margin="5 10">
+                                        <Grid Margin="5 15">
                                             <Grid.RowDefinitions>
                                                 <RowDefinition Height="Auto" />
                                                 <RowDefinition Height="Auto" />
@@ -123,7 +125,7 @@
 
                                             <Button Grid.Row="0" Command="{Binding ExecuteCommand}"
                                                     HorizontalAlignment="Right">
-                                                Execute
+                                                Execute in browser
                                             </Button>
 
                                             <ProgressBar

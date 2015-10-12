@@ -84,6 +84,7 @@
     <Compile Include="FailedAutomationStepExecution.cs" />
     <Compile Include="IAutomationFlow.cs" />
     <Compile Include="Loader\FlowAssemblyLoader.cs" />
+    <Compile Include="Metadata\CustomAttributeExtensions.cs" />
     <Compile Include="Metadata\UIExecutableAttribute.cs" />
     <Compile Include="Orchestration\AutomationOrchestrator.cs" />
     <Compile Include="Output\ConsoleListener.cs" />

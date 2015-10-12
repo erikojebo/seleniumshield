@@ -80,18 +80,15 @@ namespace SeleniumShield.UIRunner.ViewModels
             }
         }
 
-        public DelegateCommand InitializeFlowListCommand
-        {
-            get { return Get(() => InitializeFlowListCommand); }
-            set { Set(() => InitializeFlowListCommand, value); }
-        }
+        public DelegateCommand InitializeFlowListCommand { get; }
+        public DelegateCommand ExecuteAllFlowsCommand { get; }
 
         public void OutputLine(string message, params object[] formatParams)
         {
-            Application.Current.Dispatcher.Invoke(() =>
+            Application.Current.Dispatcher.Invoke((Action)(() =>
             {
                 Log += Environment.NewLine + string.Format(message, formatParams);
-            });
+            }));
         }
     }
 }
