@@ -183,8 +183,7 @@
 
                                                             <!-- Constructor parameter content -->
                                                             <TextBlock Grid.Column="0" Text="{Binding DisplayText}" />
-                                                            <TextBlock Grid.Column="1" Text="{Binding TypeName}"
-                                                                       Margin="10 0" />
+                                                            <TextBlock Grid.Column="1" Text="{Binding TypeName}" Margin="10 0" />
                                                             <TextBox Grid.Column="2" DockPanel.Dock="Right"
                                                                      HorizontalAlignment="Stretch"
                                                                      Text="{Binding Value}" />

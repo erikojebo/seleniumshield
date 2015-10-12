@@ -16,18 +16,17 @@ namespace SeleniumShield.UIRunner.ViewModels
             Name = parameterInfo.Name;
             TypeName = parameterInfo.ParameterType.Name;
             IsOptional = parameterInfo.IsOptional;
+            DefaultValue = (parameterInfo.DefaultValue ?? "").ToString();
+            HasDefaultValue = parameterInfo.HasDefaultValue;
 
-            DisplayText = Name;
-
-            if (parameterInfo.IsOptional)
-            {
-                DisplayText += " (optional)";
-            }
+            DisplayText = GetDisplayText(parameterInfo);
         }
 
         public string Name { get; }
         public string TypeName { get; }
         public string DisplayText { get; }
+        public string DefaultValue { get; }
+        public bool HasDefaultValue { get; }
         public bool IsOptional { get; }
 
         public string Value
@@ -50,6 +49,25 @@ namespace SeleniumShield.UIRunner.ViewModels
                     throw new SeleniumShieldConversionException($"Could not convert value '{Value}' to type '{_parameterInfo.ParameterType}' needed for parameter '{_parameterInfo.Name}'");
                 }
             }
+        }
+
+        private string GetDisplayText(ParameterInfo parameterInfo)
+        {
+            var displayText = Name;
+
+            if (parameterInfo.IsOptional)
+            {
+                displayText += " (optional";
+
+                if (HasDefaultValue && !string.IsNullOrWhiteSpace(DefaultValue))
+                {
+                    displayText += ", default: " + DefaultValue;
+                }
+
+                displayText += ")";
+            }
+
+            return displayText;
         }
     }
 }
