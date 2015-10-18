@@ -13,7 +13,7 @@ namespace SeleniumShield.Loader
         {
             return await Task.Factory.StartNew(() =>
             {
-                var assembly = Assembly.LoadFile(assemblyPath);
+                var assembly = Assembly.LoadFrom(assemblyPath);
 
                 return assembly.GetTypes()
                     .Where(x => typeof(IAutomationFlow).IsAssignableFrom(x))
