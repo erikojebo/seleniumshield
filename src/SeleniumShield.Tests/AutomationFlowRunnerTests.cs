@@ -187,6 +187,26 @@ namespace SeleniumShield.Tests
             Assert.IsNotNull(resultReport);
         }
 
+        [Test]
+        public void Common_state_is_passed_between_steps()
+        {
+            string actualValue = null;
+
+            _runner.AppendStep("Step 1", (driver, state) =>
+            {
+                state.Value1 = "expected value";
+            });
+
+            _runner.AppendStep("Step 2", (driver, state) =>
+            {
+                actualValue = state.Value1;
+            });
+
+            _runner.Execute();
+
+            Assert.AreEqual("expected value", actualValue);
+        }
+
         private AutomationStep CreateSuccessStep()
         {
             return new AutomationStep("Success step", driver => { });

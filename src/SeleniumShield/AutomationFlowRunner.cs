@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.Linq;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Firefox;
@@ -54,6 +55,12 @@ namespace SeleniumShield
             AppendStep(step);
         }
 
+        public void AppendStep(string description, Action<IWebDriver, dynamic> execute, Action<IWebDriver> reset = null)
+        {
+            var step = new AutomationStep(description, execute, reset);
+            AppendStep(step);
+        }
+
         public void AppendStep(AutomationStep stepDefinition)
         {
             _steps.Add(stepDefinition);
@@ -67,9 +74,11 @@ namespace SeleniumShield
             var driver = _driverFactoryFuncs[0]();
             _drivers.Add(driver);
 
+            var state = new ExpandoObject();
+
             foreach (var step in _steps)
             {
-                var stepRunResult = ExecuteStep(step, driver);
+                var stepRunResult = ExecuteStep(step, driver, state);
                 automationRunResult.AppendStepResult(stepRunResult);
 
                 FireStepCompleted(stepRunResult, _steps.IndexOf(step), _steps.Count);
@@ -80,7 +89,7 @@ namespace SeleniumShield
             return automationRunResult;
         }
 
-        private AutomationStepRunResult ExecuteStep(AutomationStep step, IWebDriver driver)
+        private AutomationStepRunResult ExecuteStep(AutomationStep step, IWebDriver driver, dynamic state)
         {
             var stepRunResult = new AutomationStepRunResult(step)
             {
@@ -95,7 +104,7 @@ namespace SeleniumShield
 
                 try
                 {
-                    step.Execute(driver);
+                    step.Execute(driver, state);
                     stepRunResult.WasSuccessful = true;
 
                     Log("[{0}]    Success", DateTime.Now);
