@@ -19,7 +19,20 @@ namespace SeleniumShield
 
         protected void AddStep(string description, Action<IWebDriver> execute, Action<IWebDriver> reset = null)
         {
-            _steps.Add(new AutomationStep(description, execute, reset));
+            AddStep(new AutomationStep(description, execute, reset));
+        }
+
+        protected void AddFlow(AutomationFlow flow)
+        {
+            foreach(var step in flow.GetSteps())
+            {
+                AddStep(step);
+            }
+        }
+
+        protected void AddStep(AutomationStep step)
+        {
+            _steps.Add(step);
         }
     }
 }

@@ -76,6 +76,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AutomationFlowRunnerTests.cs" />
+    <Compile Include="AutomationFlowTests.cs" />
     <Compile Include="Fakes\FakeWebDriver.cs" />
     <Compile Include="Flows\BingSearchFlow.cs" />
     <Compile Include="Flows\ConfigurableResultFlow.cs" />
