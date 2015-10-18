@@ -22,6 +22,11 @@ namespace SeleniumShield
             AddStep(new AutomationStep(description, execute, reset));
         }
 
+        protected void AddStep(string description, Action<IWebDriver, dynamic> execute, Action<IWebDriver> reset = null)
+        {
+            AddStep(new AutomationStep(description, execute, reset));
+        }
+
         protected void AddFlow(AutomationFlow flow)
         {
             foreach(var step in flow.GetSteps())
