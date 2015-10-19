@@ -107,6 +107,19 @@ namespace SeleniumShield.Tests
         }
 
         [Test]
+        public void Halts_execution_when_a_step_fails_more_than_the_max_allowed_number_of_times()
+        {
+            var wasStep2Called = false;
+
+            _runner.AppendStep(CreateFailingStep(100));
+            _runner.AppendStep("Should not be executed", driver => wasStep2Called = true);
+
+            _runner.Execute();
+
+            Assert.IsFalse(wasStep2Called);
+        }
+
+        [Test]
         public void Steps_which_did_not_succeed_within_allowed_number_of_attempts_are_marked_as_failed()
         {
             _runner.AppendStep(CreateFailingStep(failCountBeforeSucceeding: 100));

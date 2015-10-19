@@ -81,6 +81,9 @@ namespace SeleniumShield
                 var stepRunResult = ExecuteStep(step, driver, state);
                 automationRunResult.AppendStepResult(stepRunResult);
 
+                if (!stepRunResult.WasSuccessful)
+                    return automationRunResult;
+
                 FireStepCompleted(stepRunResult, _steps.IndexOf(step), _steps.Count);
             }
 
