@@ -1,9 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Interactions;
 using OpenQA.Selenium.Support.UI;
+using SeleniumShield.Driver.Checkpointing;
 using SeleniumShield.Driver.Exceptions;
 using SeleniumShield.Driver.Infrastructure;
 using SeleniumShield.Driver.Logging;
@@ -14,6 +17,7 @@ namespace SeleniumShield.Driver
     {
         private readonly IWebDriver _driverToShield;
         private readonly SeleniumShieldDriverOptions _options;
+        private readonly ActionRunner _actionRunner = new ActionRunner();
 
         public SeleniumShieldDriver(IWebDriver driverToShield, SeleniumShieldDriverOptions options)
         {
@@ -543,6 +547,48 @@ namespace SeleniumShield.Driver
                 GetRetryDelainInMilliseconds(retryDelayInSeconds),
                 throwOnTimeout);
         }
+
+        public void SetCheckpoint(Action resetAction = null)
+        {
+            _actionRunner.SetCheckpoint(resetAction);
+        }
+
+        private T Execute<T>(Func<T> func)
+        {
+            T result = default(T);
+
+            Execute(() =>
+            {
+                result = func();
+            });
+
+            return result;
+        }
+
+        private void Execute(Action action)
+        {
+            try
+            {
+                
+
+                action();
+
+                // Add a pause if the user has configured a sleep interval between actions
+                if (_options.SleepTimeBetweenActionsInMilliseconds > 0)
+                {
+                    Thread.Sleep(_options.SleepTimeBetweenActionsInMilliseconds);
+                }
+            }
+            catch (Exception)
+            {
+                // Take screenshot
+                // Write log entry
+                                
+                throw;
+            }
+        }
+
+
 
         private IWebElement TryFindElementUnsafe(By by)
         {

@@ -45,6 +45,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Checkpointing\ActionRunner.cs" />
+    <Compile Include="Checkpointing\Checkpoint.cs" />
     <Compile Include="Exceptions\SeleniumShieldDriverException.cs" />
     <Compile Include="Exceptions\SeleniumShieldDriverTimeoutException.cs" />
     <Compile Include="Infrastructure\RetryingTaskRunner.cs" />

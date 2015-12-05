@@ -75,6 +75,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ActionExecution\ActionRunnerTests.cs" />
     <Compile Include="AutomationFlowRunnerTests.cs" />
     <Compile Include="AutomationFlowTests.cs" />
     <Compile Include="Fakes\FakeWebDriver.cs" />
@@ -82,6 +83,8 @@
     <Compile Include="Flows\ConfigurableResultFlow.cs" />
     <Compile Include="Flows\FlowWithOptionalParams.cs" />
     <Compile Include="Flows\SlowMultiStepFlow.cs" />
+    <Compile Include="Infrastructure\ConfigurableResultAction.cs" />
+    <Compile Include="Infrastructure\PreconfiguredFailureException.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -89,6 +92,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\SeleniumShield.Driver\SeleniumShield.Driver.csproj">
+      <Project>{c52f5fa3-392c-44fa-a107-7554b1916bfa}</Project>
+      <Name>SeleniumShield.Driver</Name>
+    </ProjectReference>
     <ProjectReference Include="..\SeleniumShield\SeleniumShield.csproj">
       <Project>{EDD05FB6-BC24-4A79-A7A6-9511CD2E59AF}</Project>
       <Name>SeleniumShield</Name>
