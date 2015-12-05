@@ -2,32 +2,18 @@
 using System.Threading;
 using NUnit.Framework;
 using OpenQA.Selenium;
-using OpenQA.Selenium.Firefox;
-using SeleniumShield.Driver;
 
 namespace SeleniumShield.Tests.UITests
 {
     [TestFixture]
-    public class SmokeTests
+    public class SmokeTests : UITestBase
     {
-        private SeleniumShieldDriver _driver;
-        private FirefoxDriver _firefoxDriver;
-
         [SetUp]
         public void SetUp()
         {
-            _firefoxDriver = new FirefoxDriver();
+            CreateDriver();
 
-            var options = new SeleniumShieldDriverOptions()
-            {
-                BaseUrl = "http://localhost/seleniumshield",
-                DefaultRetryDelayInSeconds = 0.1,
-                DefaultTimeoutInSeconds = 5,
-                SleepTimeBetweenActionsInMilliseconds = 0,
-                MaxRetryCountPerCheckpoint = 3
-            };
-
-            _driver = new SeleniumShieldDriver(_firefoxDriver, options);
+            Options.SleepTimeBetweenActionsInMilliseconds = 1000;
         }
 
         [Test]
@@ -35,32 +21,33 @@ namespace SeleniumShield.Tests.UITests
         {
             int attemptNumber = 0;
 
-            _driver.GoToRelativeUrl("/");
+            Driver.GoToRelativeUrl("/");
 
-            _driver.SetCheckpoint(_driver.Refresh);
-            _driver.WriteTo("#username", "kalle");
-            _driver.WriteTo("#password", "p@ssw0rd");
-            _driver.WithUnsafeDriver(d => attemptNumber++);
-            _driver.WithUnsafeDriver(d =>
+            Driver.SetCheckpoint(Driver.Refresh);
+            Driver.WriteTo("#username", "kalle");
+            Driver.WriteTo("#password", "p@ssw0rd");
+            Driver.WithUnsafeDriver(d => attemptNumber++);
+            Driver.WithUnsafeDriver(d =>
             {
                 if (attemptNumber > 2)
                     return;
 
-                _driver.WriteTo("#username", $"about to fail, #{attemptNumber}");
-
-                Thread.Sleep(1000);
+                Driver.WriteTo("#username", $"about to fail, #{attemptNumber}");
 
                 throw new Exception("Configured to fail");
             });
 
-            _driver.Submit(By.Id("value_submitter"));
+            Driver.Submit(By.Id("value_submitter"));
+
+            Driver.WaitUntilElementIsVisible(By.Id("container1"));
+
+            Assert.AreEqual(3, attemptNumber);
         }
 
         [TearDown]
         public void TearDown()
         {
-            _driver.Close();
-            _driver.Quit();
+            CleanUp();
         }
     }
 }
