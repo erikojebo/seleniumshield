@@ -27,7 +27,7 @@ namespace SeleniumShield.Driver.Checkpointing
             _restoreCount++;
             _resetAction?.Invoke();
 
-            foreach (var executedAction in _executedActions)
+            foreach (var executedAction in _executedActions.ToList())
             {
                 executedAction();
             }

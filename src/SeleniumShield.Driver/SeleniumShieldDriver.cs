@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Threading;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Interactions;
 using OpenQA.Selenium.Support.UI;
@@ -22,6 +21,8 @@ namespace SeleniumShield.Driver
         {
             _driverToShield = driverToShield;
             _options = options;
+
+            _actionRunner.AllowedRestoreCountPerCheckpoint = _options.MaxRetryCountPerCheckpoint;
         }
 
         public void Dispose()
@@ -177,16 +178,16 @@ namespace SeleniumShield.Driver
 
         public void Submit(string selector, double? timeoutInSeconds = null, double? retryDelayInSeconds = null)
         {
-            Submit(selector, timeoutInSeconds, retryDelayInSeconds, By.CssSelector(selector));
+            Submit(By.CssSelector(selector), timeoutInSeconds, retryDelayInSeconds);
         }
 
-        private void Submit(string selector, double? timeoutInSeconds, double? retryDelayInSeconds, By @by)
+        public void Submit(By by, double? timeoutInSeconds = null, double? retryDelayInSeconds = null)
         {
             WithRetry(() =>
             {
-                MoveTo(selector);
+                MoveTo(by);
 
-                var element = FindElement(@by, timeoutInSeconds, retryDelayInSeconds);
+                var element = FindElement(by, timeoutInSeconds, retryDelayInSeconds);
                 element.Submit();
             }, timeoutInSeconds, retryDelayInSeconds);
         }
