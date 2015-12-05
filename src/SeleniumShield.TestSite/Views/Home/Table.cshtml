@@ -1,0 +1,44 @@
+﻿@{
+    ViewBag.Title = "Table";
+}
+
+<h2>@ViewBag.Value header</h2>
+
+<div id="container1">
+    <table>
+        <tr>
+            <th>Column 1</th>
+            <th>Column 2</th>
+            <th>Column 3 (link)</th>
+        </tr>
+        <tr>
+            <td>@ViewBag.Value 1_1</td>
+            <td>@ViewBag.Value 1_2</td>
+            <td><a href="http://www.seleniumshield.testsite?foo=@ViewBag.Value">@ViewBag.Value foo link</a></td>
+        </tr>
+        <tr>
+            <td>@ViewBag.Value 2_1</td>
+            <td>@ViewBag.Value 2_2</td>
+            <td><a href="http://www.seleniumshield.testsite?bar=@ViewBag.Value">@ViewBag.Value bar link</a></td>
+        </tr>
+    </table>
+</div>
+
+<h2>Table 2</h2>
+
+<div id="container2">
+    <table>
+        <tr>
+            <th>Table 2 - Column 1</th>
+            <th>Table 2 - Column 2</th>
+        </tr>
+        <tr>
+            <td>@ViewBag.Value foo</td>
+            <td>@ViewBag.Value bar</td>
+        </tr>
+        <tr>
+            <td>@ViewBag.Value baz</td>
+            <td>@ViewBag.Value zap</td>
+        </tr>
+    </table>
+</div>

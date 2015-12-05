@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 
 namespace SeleniumShield.Driver.Checkpointing
 {
@@ -8,12 +9,18 @@ namespace SeleniumShield.Driver.Checkpointing
     {
         private readonly List<Checkpoint> _checkpoints = new List<Checkpoint>();
 
-        public void Execute(Action action)
+        public void Execute(Action action, int sleepTimeBetweenActionsInMilliseconds = 0)
         {
             if (_checkpoints.Any())
                 _checkpoints.Last().AddExecutedAction(action);
 
             ExecuteWithCheckpointRestore(action);
+            
+            // Add a pause if the user has configured a sleep interval between actions
+            if (sleepTimeBetweenActionsInMilliseconds > 0)
+            {
+                Thread.Sleep(sleepTimeBetweenActionsInMilliseconds);
+            }
         }
 
         public void ExecuteWithCheckpointRestore(Action action)
@@ -49,7 +56,7 @@ namespace SeleniumShield.Driver.Checkpointing
 
         public int AllowedRestoreCountPerCheckpoint { get; set; }
 
-        public void SetCheckpoint(Action resetAction)
+        public void SetCheckpoint(Action resetAction = null)
         {
             _checkpoints.Add(new Checkpoint(AllowedRestoreCountPerCheckpoint, resetAction));
         }

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading;
@@ -531,64 +530,32 @@ namespace SeleniumShield.Driver
             double? retryDelayInSeconds = null, 
             bool throwOnTimeout = true)
         {
-            RetryingTaskRunner.ExecuteWithRetry(() =>
+            try
+            {
+                _actionRunner.Execute(() =>
                 {
-                    try
-                    {
-                        action();
-                    }
-                    catch (Exception ex)
-                    {
-                        LogWarning("WithRetry", $"Exception occurred: {ex}");
-                        throw;
-                    }
-                }, 
-                GetTimeoutInMilliseconds(timeoutInSeconds), 
-                GetRetryDelainInMilliseconds(retryDelayInSeconds),
-                throwOnTimeout);
+                    RetryingTaskRunner.ExecuteWithRetry(
+                        action,
+                        GetTimeoutInMilliseconds(timeoutInSeconds),
+                        GetRetryDelainInMilliseconds(retryDelayInSeconds),
+                        throwOnTimeout);
+
+                }, _options.SleepTimeBetweenActionsInMilliseconds);
+            }
+            catch (Exception ex)
+            {
+                // Take screenshot
+
+                LogWarning("WithRetry", $"Exception occurred: {ex}");
+
+                throw;
+            }
         }
 
         public void SetCheckpoint(Action resetAction = null)
         {
             _actionRunner.SetCheckpoint(resetAction);
         }
-
-        private T Execute<T>(Func<T> func)
-        {
-            T result = default(T);
-
-            Execute(() =>
-            {
-                result = func();
-            });
-
-            return result;
-        }
-
-        private void Execute(Action action)
-        {
-            try
-            {
-                
-
-                action();
-
-                // Add a pause if the user has configured a sleep interval between actions
-                if (_options.SleepTimeBetweenActionsInMilliseconds > 0)
-                {
-                    Thread.Sleep(_options.SleepTimeBetweenActionsInMilliseconds);
-                }
-            }
-            catch (Exception)
-            {
-                // Take screenshot
-                // Write log entry
-                                
-                throw;
-            }
-        }
-
-
 
         private IWebElement TryFindElementUnsafe(By by)
         {

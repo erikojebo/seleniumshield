@@ -183,6 +183,42 @@ namespace SeleniumShield.Tests.ActionExecution
             AreEqual(new[] { 1, 2, 3, 4, 5, 100, 2, 3, 100, 2, 3, 4, 5, 6, 200, 7, 8, 300, 8, 300, 8, 9, 10, 11 }, _items);
         }
 
+        [Test]
+        public void Failure_after_checkpoint_without_reset_action_replays_actions_without_reset()
+        {
+            _runner.AllowedRestoreCountPerCheckpoint = 1;
+
+            var failsFirstTime = ConfigurableResultAction.Create(() => _items.Add(3))
+                .QueueFailure()
+                .QueueSuccessForAllSubsequentCalls();
+
+            _runner.Execute(() => _items.Add(1));
+
+            _runner.SetCheckpoint();
+
+            _runner.Execute(() => _items.Add(2));
+            _runner.Execute(failsFirstTime.Invoke);
+
+            AreEqual(new[] { 1, 2, 2, 3 }, _items);
+        }
+
+        [Test]
+        public void Checkpoint_can_be_set_before_any_actions_have_been_executed()
+        {
+            _runner.AllowedRestoreCountPerCheckpoint = 1;
+
+            var failsFirstTime = ConfigurableResultAction.Create(() => _items.Add(2))
+                .QueueFailure()
+                .QueueSuccessForAllSubsequentCalls();
+
+            _runner.SetCheckpoint();
+
+            _runner.Execute(() => _items.Add(1));
+            _runner.Execute(failsFirstTime.Invoke);
+
+            AreEqual(new[] { 1, 1, 2 }, _items);
+        }
+
         private void AreEqual<T>(IEnumerable<T> expected, IEnumerable<T> actual)
         {
             var expectedString = string.Join(", ", expected);

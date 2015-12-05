@@ -25,7 +25,7 @@ namespace SeleniumShield.Driver.Checkpointing
         public void ReplayExecuted()
         {
             _restoreCount++;
-            _resetAction.Invoke();
+            _resetAction?.Invoke();
 
             foreach (var executedAction in _executedActions)
             {
