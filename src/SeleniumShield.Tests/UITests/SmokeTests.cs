@@ -13,36 +13,67 @@ namespace SeleniumShield.Tests.UITests
         {
             CreateDriver();
 
-            Options.SleepTimeBetweenActionsInMilliseconds = 1000;
+            Options.SleepTimeBetweenActionsInMilliseconds = 200;
         }
 
+        //[Test]
+        //public void Restoring_checkpoint_replays_actions_taken_after_checkpoint()
+        //{
+        //    int attemptNumber = 0;
+
+        //    Driver.GoToRelativeUrl("/");
+
+        //    Driver.SetCheckpoint(Driver.Refresh);
+        //    Driver.WriteTo("#username", "kalle");
+        //    Driver.WriteTo("#password", "p@ssw0rd");
+        //    Driver.WithUnsafeDriver(d => attemptNumber++);
+        //    Driver.WithUnsafeDriver(d =>
+        //    {
+        //        if (attemptNumber > 2)
+        //            return;
+
+        //        Driver.WriteTo("#username", $"about to fail, #{attemptNumber}");
+
+        //        throw new Exception("Configured to fail");
+        //    });
+
+        //    Driver.Submit(By.Id("value_submitter"));
+
+        //    Driver.WaitUntilElementIsVisible(By.Id("container1"));
+
+        //    Assert.AreEqual(3, attemptNumber);
+        //}
+
         [Test]
-        public void Restoring_checkpoint_replays_actions_taken_after_checkpoint()
+        public void Larger_retry_scope_with_max_retry_attempt_count()
         {
             int attemptNumber = 0;
 
             Driver.GoToRelativeUrl("/");
 
-            Driver.SetCheckpoint(Driver.Refresh);
-            Driver.WriteTo("#username", "kalle");
-            Driver.WriteTo("#password", "p@ssw0rd");
-            Driver.WithUnsafeDriver(d => attemptNumber++);
-            Driver.WithUnsafeDriver(d =>
+            Driver.WithRetryAttemptLimit(() =>
             {
-                if (attemptNumber > 2)
-                    return;
+                Driver.WriteTo("#username", "kalle");
+                Driver.WriteTo("#password", "p@ssw0rd");
+                Driver.WithUnsafeDriver(d => attemptNumber++);
+                Driver.WithUnsafeDriver(d =>
+                {
+                    if (attemptNumber > 2)
+                        return;
 
-                Driver.WriteTo("#username", $"about to fail, #{attemptNumber}");
+                    Driver.WriteTo("#username", $"about to fail, #{attemptNumber}");
 
-                throw new Exception("Configured to fail");
-            });
+                    throw new Exception("Configured to fail");
+                });
 
-            Driver.Submit(By.Id("value_submitter"));
+                Driver.Submit(By.Id("value_submitter"));
 
-            Driver.WaitUntilElementIsVisible(By.Id("container1"));
-
+                Driver.WaitUntilElementIsVisible(By.Id("container1"));
+            }, 3);
+            
             Assert.AreEqual(3, attemptNumber);
         }
+
 
         [TearDown]
         public void TearDown()

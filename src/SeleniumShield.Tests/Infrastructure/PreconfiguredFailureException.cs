@@ -4,7 +4,7 @@ namespace SeleniumShield.Tests.Infrastructure
 {
     public class PreconfiguredFailureException : Exception
     {
-        public PreconfiguredFailureException(string message) : base(message)
+        public PreconfiguredFailureException(string message = "Configured to fail") : base(message)
         {
             
         }

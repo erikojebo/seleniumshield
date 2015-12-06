@@ -14,12 +14,17 @@ namespace SeleniumShield.Driver.Checkpointing
             if (_checkpoints.Any())
                 _checkpoints.Last().AddExecutedAction(action);
 
-            ExecuteWithCheckpointRestore(action);
-            
-            // Add a pause if the user has configured a sleep interval between actions
-            if (sleepTimeBetweenActionsInMilliseconds > 0)
+            try
             {
-                Thread.Sleep(sleepTimeBetweenActionsInMilliseconds);
+                ExecuteWithCheckpointRestore(action);
+            }
+            finally
+            {
+                // Add a pause if the user has configured a sleep interval between actions
+                if (sleepTimeBetweenActionsInMilliseconds > 0)
+                {
+                    Thread.Sleep(sleepTimeBetweenActionsInMilliseconds);
+                }
             }
         }
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Interactions;
 using OpenQA.Selenium.Support.UI;
@@ -597,6 +598,47 @@ namespace SeleniumShield.Driver
             ExecuteUserInitiatedAction(() => WithRetryInternal(action, timeoutInSeconds, retryDelayInSeconds, throwOnTimeout));
         }
 
+        public void WithRetryAttemptLimit(Action action, int maxAllowedRetryAttempts)
+        {
+            ExecuteUserInitiatedAction(() => WithRetryAttemptLimitInternal(action, maxAllowedRetryAttempts));
+        }
+
+        private T WithRetryInternal<T>(
+                    Func<T> action,
+                    double? timeoutInSeconds = null,
+                    double? retryDelayInSeconds = null,
+                    bool throwOnTimeout = true)
+        {
+            var result = default(T);
+
+            WithRetryInternal(() =>
+            {
+                result = action();
+            }, timeoutInSeconds, retryDelayInSeconds, throwOnTimeout);
+
+            return result;
+        }
+
+        private void WithRetryInternal(
+            Action action,
+            double? timeoutInSeconds = null,
+            double? retryDelayInSeconds = null,
+            bool throwOnTimeout = true)
+        {
+            WithErrorHandling(() =>
+                RetryingTaskRunner.ExecuteWithRetry(
+                    action,
+                    GetTimeoutInMilliseconds(timeoutInSeconds),
+                    GetRetryDelainInMilliseconds(retryDelayInSeconds),
+                    throwOnTimeout)
+            );
+        }
+
+        private void WithRetryAttemptLimitInternal(Action action, int maxAllowedRetryAttempts)
+        {
+            WithErrorHandling(() => RetryingTaskRunner.ExecuteWithRetryAttemptLimit(action, maxAllowedRetryAttempts));
+        }
+
         private T ExecuteUserInitiatedAction<T>(Func<T> func)
         {
             var result = default(T);
@@ -611,6 +653,16 @@ namespace SeleniumShield.Driver
 
         private void ExecuteUserInitiatedAction(Action action)
         {
+            action();
+
+            // Add a pause if the user has configured a sleep interval between actions
+            if (_options.SleepTimeBetweenActionsInMilliseconds > 0)
+            {
+                Thread.Sleep(_options.SleepTimeBetweenActionsInMilliseconds);
+            }
+
+            return;
+
             // If we are withing an internal block which itself can contain calls to other internal functions
             // we can't store the action executions in the runner, since that would store the actions twice.
             // For example, given a retry block which calls MoveTo, then WithUnsafeDriver, the whole block
@@ -623,37 +675,13 @@ namespace SeleniumShield.Driver
                 _actionRunner.Execute(action, _options.SleepTimeBetweenActionsInMilliseconds);
         }
 
-        private T WithRetryInternal<T>(
-            Func<T> action,
-            double? timeoutInSeconds = null,
-            double? retryDelayInSeconds = null,
-            bool throwOnTimeout = true)
-        {
-            var result = default(T);
-
-            WithRetryInternal(() =>
-            {
-                result = action();
-            }, timeoutInSeconds, retryDelayInSeconds, throwOnTimeout);
-
-            return result;
-        }
-
-        private void WithRetryInternal(
-            Action action, 
-            double? timeoutInSeconds = null, 
-            double? retryDelayInSeconds = null, 
-            bool throwOnTimeout = true)
+        private void WithErrorHandling(Action action)
         {
             _internalBlockExecutionDepth++;
 
             try
             {
-                RetryingTaskRunner.ExecuteWithRetry(
-                    action,
-                    GetTimeoutInMilliseconds(timeoutInSeconds),
-                    GetRetryDelainInMilliseconds(retryDelayInSeconds),
-                    throwOnTimeout);
+                action();
             }
             catch (Exception ex)
             {
@@ -669,10 +697,10 @@ namespace SeleniumShield.Driver
             }
         }
 
-        public void SetCheckpoint(Action resetAction = null)
-        {
-            _actionRunner.SetCheckpoint(resetAction);
-        }
+        //public void SetCheckpoint(Action resetAction = null)
+        //{
+        //    _actionRunner.SetCheckpoint(resetAction);
+        //}
 
         private IWebElement TryFindElementUnsafe(By by)
         {

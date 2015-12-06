@@ -1,12 +1,31 @@
 ﻿using System;
 using System.Threading;
-using OpenQA.Selenium;
 using SeleniumShield.Driver.Exceptions;
 
 namespace SeleniumShield.Driver.Infrastructure
 {
-    internal class RetryingTaskRunner
+    public class RetryingTaskRunner
     {
+        public static void ExecuteWithRetryAttemptLimit(Action action, int maxAllowedRetryAttempts)
+        {
+            Exception lastException = null;
+
+            for (int i = 0; i <= maxAllowedRetryAttempts; i++)
+            {
+                try
+                {
+                    action();
+                    return;
+                }
+                catch (Exception ex)
+                {
+                    lastException = ex;
+                }
+            }
+
+            throw new SeleniumShieldDriverException("Failed more than the allowed number of retry attempts. See inner exception for details.", lastException);
+        }
+
         public static void ExecuteWithRetry(Action action, int timeoutInMilliseconds, int retryDelainInMilliseconds = 1000, bool throwOnTimeOut = true)
         {
             var retryDeadline = DateTime.Now.AddMilliseconds(timeoutInMilliseconds);
