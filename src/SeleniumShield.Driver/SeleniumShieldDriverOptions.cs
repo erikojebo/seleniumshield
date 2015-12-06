@@ -17,6 +17,12 @@ namespace SeleniumShield.Driver
         public double DefaultRetryDelayInSeconds { get; set; }
 
         /// <summary>
+        /// Gets or sets the default maximal number of retry attempts allowed for a
+        /// retry block with a limit on the number of attempts, rathern than a timeout
+        /// </summary>
+        public int DefaultMaxAllowedRetryAttempts { get; set; }
+
+        /// <summary>
         /// Gets or sets the time that the driver will pause before any action is taken.
         /// Leave as zero for full speed.
         /// This can be useful when debugging a failing test to slow down the action sequence.

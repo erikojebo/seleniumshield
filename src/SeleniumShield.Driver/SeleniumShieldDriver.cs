@@ -598,9 +598,10 @@ namespace SeleniumShield.Driver
             ExecuteUserInitiatedAction(() => WithRetryInternal(action, timeoutInSeconds, retryDelayInSeconds, throwOnTimeout));
         }
 
-        public void WithRetryAttemptLimit(Action action, int maxAllowedRetryAttempts)
+        public void WithRetryAttemptLimit(Action action, int? maxAllowedRetryAttempts = null)
         {
-            ExecuteUserInitiatedAction(() => WithRetryAttemptLimitInternal(action, maxAllowedRetryAttempts));
+            var safeMaxAllowedRetryAttempts = maxAllowedRetryAttempts ?? _options.DefaultMaxAllowedRetryAttempts;
+            ExecuteUserInitiatedAction(() => WithRetryAttemptLimitInternal(action, safeMaxAllowedRetryAttempts));
         }
 
         private T WithRetryInternal<T>(
